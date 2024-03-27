@@ -5,9 +5,10 @@ import numpy as np
 np.set_printoptions(suppress=True)
 
 # Load the model
-
+model = load_model("keras_Model.h5", compile=False)
 
 # Load the labels
+classNames = open("labels.txt", "r").readlines()
 
 
 camera = cv2.VideoCapture(0)
@@ -28,18 +29,19 @@ while True:
     cv2.imshow("Webcam Image", image)
 
     # Make the image a numpy array and reshape it to the models input shape.
-    
+    image = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
 
     # Normalize the image array
-    
+    image = (image / 127.5) - 1
 
     # Predict using  the model
-    
+    prediction = model.predict(image)
+    index = np.argmax(prediction)
 
     # Get className
-
+    className = classNames[index]
     # Get confidence score
-
+    confidenceScore = prediction[0][index]
     keyboardInput = cv2.waitKey(1)
 
     if keyboardInput == 27:
